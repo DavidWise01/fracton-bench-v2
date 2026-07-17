@@ -1,0 +1,9 @@
+ROOT0-DLW-CHAIN-v1
+index : 1426
+slug  : fracton-bench-v2
+seal  : 58eb687bcc6de79dab52ceb9c1bfaa8f3e88da52de71ad59178371d9c6b20607
+prev  : c127b9c5e1d50257caae1bdc86ad4558e999173c1f113fcf7a84eb2ab88a923b
+link  : 71529eba5b23334c4e31452965f338b8f8819eaa2bd51749c620f90a169d7b23
+head  : 71529eba5b23334c4e31452965f338b8f8819eaa2bd51749c620f90a169d7b23
+
+— the tether: link = sha256(index|slug|seal|prev). the chain head commits to the whole corpus.
