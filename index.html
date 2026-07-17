@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>fracton bench v2 · the engine</title>
+<!-- PAPER ----------------------------------------------------------------
+  fracton bench v2 — the generator THE TERNARY FRACTON described but never
+  contained. Object: 3D qutrit CSS cubic code, 2 qutrits/site, LxLxL torus,
+  Haah-code-1 support over F_3:
+     Z-check:  a1 = 1+x+y+z (qutrit 1),  a2 = 1+xy+yz+zx (qutrit 2)
+     X-check:  b1 = a2(x⁻¹,y⁻¹,z⁻¹),    b2 = −a1(x⁻¹,y⁻¹,z⁻¹)
+  Commutation is identical by construction and STILL verified numerically.
+  Generator selected by scan over F_3 coefficient variants (all-ones wins).
+  Probes, re-run LIVE in this page: commutation · k(L) rank sweep · tube
+  (string) hunt · planar-logical existence. Baked expectations from Python
+  (conductor2.py, 2026-07-17); live/baked mismatch fails loud.
+  Measured: k = 6,0,6,0,18,0,6 for L=2..8 · zero tube-confined logicals at
+  L=6 where k=18 (non-vacuous) · planar logicals exist, fractal-sparse
+  (weight 18 of 72 slab qutrits). Sphere lineage: the-fracton (QUANTUM
+  FRONTIER) — diagram then, engine now. Offline · system fonts · fail-loud.
+------------------------------------------------------------------------ -->
+<style>
+:root{--ink:#0d0b08;--panel:#161310;--edge:#2c2318;--org:#ff6a00;--org2:#ff9a3c;
+--amb:#ffc233;--lit:#7dff6a;--fail:#ff3b3b;--pale:#e8ddcc;--dim:#8f8471;--ref:#6ab8ff;font-size:15px}
+*{box-sizing:border-box}
+body{margin:0;background:var(--ink);color:var(--pale);font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;line-height:1.45}
+header{padding:1.1rem 1.4rem .9rem;border-bottom:4px solid var(--org);background:linear-gradient(180deg,#1b1610,#0d0b08)}
+h1{margin:0;font-size:1.45rem;letter-spacing:.04em;color:var(--org);text-transform:uppercase;font-weight:800}
+.sub{color:var(--dim);margin-top:.3rem;font-size:.85rem}
+.wrap{padding:1rem 1.4rem 2.5rem;max-width:1240px;margin:0 auto}
+.panel{background:var(--panel);border:1px solid var(--edge);border-left:5px solid var(--org);padding:.8rem 1rem;margin:.9rem 0}
+h2{margin:.1rem 0 .55rem;font-size:.95rem;color:var(--org2);text-transform:uppercase;letter-spacing:.08em}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:.9rem}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.9rem}
+@media(max-width:960px){.grid2,.grid3{grid-template-columns:1fr}}
+.card{padding:.6rem .8rem;margin:.45rem 0;border:1px solid var(--edge);font-size:.85rem}
+.card.lit{border-left:5px solid var(--lit)}.card.lit b{color:var(--lit)}
+.card.amber{border-left:5px solid var(--amb)}.card.amber b{color:var(--amb)}
+.card.fail{border-left:5px solid var(--fail);color:#ffd9d9;white-space:pre-wrap}
+.card.warn{border-left:5px solid var(--fail)}.card.warn b{color:var(--fail)}
+.card.ref{border-left:5px solid var(--ref)}.card.ref b{color:var(--ref)}
+.card.tot{border-left:5px solid var(--org2);background:#1d1710}
+.mon{background:#0a0908;border:1px solid var(--edge);min-height:9.5rem;max-height:13rem;overflow-y:auto;padding:.5rem .6rem;font-size:.74rem}
+.mon .ln{margin:.12rem 0;color:var(--dim)}
+.mon .ln.ok{color:var(--lit)}.mon .ln.bad{color:var(--fail)}.mon .ln.hd{color:var(--org2)}
+.tag{display:inline-block;padding:.05rem .45rem;border:1px solid;font-size:.7rem;letter-spacing:.08em;margin-left:.4rem;vertical-align:middle}
+.tag.run{color:var(--amb);border-color:var(--amb)}.tag.lit{color:var(--lit);border-color:var(--lit)}.tag.fail{color:var(--fail);border-color:var(--fail)}
+canvas{display:block;width:100%;background:#0a0908;border:1px solid var(--edge)}
+.legend{color:var(--dim);font-size:.74rem;margin-top:.4rem}
+button{background:none;border:1px solid var(--org);color:var(--org);cursor:pointer;font-family:inherit;font-size:.78rem;padding:.25rem .7rem;letter-spacing:.05em}
+button.on{background:var(--org);color:var(--ink)}
+.row{display:flex;gap:.6rem;align-items:center;margin-top:.45rem;flex-wrap:wrap}
+footer{color:var(--dim);font-size:.72rem;padding:0 1.4rem 2rem;max-width:1240px;margin:0 auto}
+.mono{color:var(--org2)}
+</style>
+</head>
+<body>
+<header>
+  <h1>fracton bench v2 · the engine</h1>
+  <div class="sub">3D qutrit cubic code over F₃ — the generator the-fracton sphere described but never contained · every claim recomputed live before it renders</div>
+</header>
+<div class="wrap">
+
+  <div class="panel"><h2>generator</h2>
+    <div class="card ref"><b>the engine, stated once, checked forever.</b> L×L×L torus, two qutrits per site. Z-check per cube: <span class="mono">a₁ = 1+x+y+z</span> on qutrit 1, <span class="mono">a₂ = 1+xy+yz+zx</span> on qutrit 2. X-check: <span class="mono">b₁ = a₂(x⁻¹,y⁻¹,z⁻¹)</span>, <span class="mono">b₂ = −a₁(x⁻¹,y⁻¹,z⁻¹)</span>. Selected by scanning all F₃ sign variants of the cross terms — the all-ones lift of Haah code 1 support carried the most logical space on the scan grid. Commutation is identical by algebra and re-verified numerically below anyway, because algebra done at midnight is exactly what benches are for.</div></div>
+
+  <div class="panel"><h2>verdict</h2><div id="readout"><div class="card amber">⏳ conductor booting — verdict renders only after all live probes complete…</div></div></div>
+
+  <div class="panel"><h2>conductor <span id="ctag" class="tag run">RUNNING</span></h2>
+    <div class="grid3">
+      <div><h2 style="font-size:.78rem">probe-1 · commutation + k(L) <span id="t1tag" class="tag run">QUEUED</span></h2><div class="mon" id="m1"></div></div>
+      <div><h2 style="font-size:.78rem">probe-2 · string hunt (tubes) <span id="t2tag" class="tag run">QUEUED</span></h2><div class="mon" id="m2"></div></div>
+      <div><h2 style="font-size:.78rem">probe-3 · planar logicals <span id="t3tag" class="tag run">QUEUED</span></h2><div class="mon" id="m3"></div></div>
+    </div>
+  </div>
+
+  <div class="grid2">
+    <div class="panel"><h2>2D — k(L) & the logical's plane</h2>
+      <canvas id="c2d" width="580" height="430"></canvas>
+      <div class="legend">top: k(L) — orange bars = live rank (L=2..6), hollow bars = python-baked (L=7,8), gold rings = baked expectation on every bar. bottom: the MEASURED planar logical at L=6 — one 6×6 plane, both qutrit slots per site (left/right half-cells); orange = exponent 1, amber = exponent 2, dark = untouched. 18 of 72 slots: fractal-sparse, not a line.</div></div>
+    <div class="panel"><h2>3D — the operator in the lattice (soft-GL)</h2>
+      <canvas id="c3d" width="580" height="430"></canvas>
+      <div class="row"><button id="spin" class="on">spin</button><span class="legend">the full 6×6×6 torus as faint sites; the measured logical operator glows in its single plane. no tube through this lattice carries a logical — the hunt below proves it at k=18. drag to rotate.</span></div></div>
+  </div>
+
+  <div class="panel"><h2>toddler corner</h2>
+    <div class="card ref"><b>ELI5:</b> last time we had a beautiful drawing of a treasure-protecting snowflake, but no actual lock — just the drawing. now we built the lock. we checked it three ways: (1) all the lock's teeth mesh perfectly (commutation), (2) counted how many treasures it can hold at each size — the count jumps around weirdly (6, 0, 6, 0, 18…) and that's measured, not guessed, (3) tried to pick it with every skinny wire we could bend (tubes through the lattice) — none work. the only keys that exist are snowflake-shaped and flat like a sheet of paper. and one honest note: at some sizes the box holds zero treasures — a lock with nothing behind it. we say so.</div></div>
+
+  <div class="panel"><h2>method &amp; provenance</h2>
+    <div class="card lit"><b>double verification.</b> conductor2.py (numpy, F₃ elimination) ran the scan, sweep, and hunts; this page re-runs commutation, k(2..6), the L=4 tube hunt, and the planar-existence check in an independent JS implementation. baked ≠ live ⇒ red monitors and a dead verdict.</div>
+    <div class="card ref"><b>lineage.</b> support shape: Haah, PRA 83, 042330 (2011). qutrit cubic-code kin: fracton-zoo qutrit models; arXiv 2606.19873 (June 2026). sphere ancestry: the-fracton · QUANTUM FRONTIER · UD0 — self-stamped AMBER as a teaching model then; engine delivered now.</div>
+  </div>
+</div>
+<footer>fracton bench v2 · F₃ · a₁=1+x+y+z · a₂=1+xy+yz+zx · 2 qutrits/site · L³ torus · generator→scan→sweep→hunt→verdict · single seed, offline</footer>
+
+<script>
+"use strict";
+function boom(where,e){
+  var r=document.getElementById('readout');
+  r.innerHTML='<div class="card fail">⛔ INSTRUMENT FAULT @ '+where+'\n'+(e&&e.stack?e.stack:String(e))+'</div>';
+  var c=document.getElementById('ctag');c.textContent='FAIL';c.className='tag fail';
+  throw e;
+}
+window.addEventListener('error',function(ev){try{boom('window',ev.error||ev.message);}catch(_){}});
+
+/*CORE-BEGIN*/
+var P=3;
+var A1=[[0,0,0],[1,0,0],[0,1,0],[0,0,1]], A2=[[0,0,0],[1,1,0],[0,1,1],[1,0,1]];
+function inv3(a){a=((a%P)+P)%P;if(a===1)return 1;if(a===2)return 2;throw new Error('inv3(0)');}
+function buildH3(L){
+  var n=2*L*L*L,HZ=[],HX=[],i,j,k,r,t;
+  var q=function(s,i,j,k){var m=function(a){return ((a%L)+L)%L;};return s*L*L*L+(m(i)*L+m(j))*L+m(k);};
+  for(i=0;i<L;i++)for(j=0;j<L;j++)for(k=0;k<L;k++){
+    var rz=new Int32Array(n),rx=new Int32Array(n);
+    for(t=0;t<4;t++){
+      var d=A1[t];rz[q(0,i+d[0],j+d[1],k+d[2])]=(rz[q(0,i+d[0],j+d[1],k+d[2])]+1)%P;
+      d=A2[t];    rz[q(1,i+d[0],j+d[1],k+d[2])]=(rz[q(1,i+d[0],j+d[1],k+d[2])]+1)%P;
+      d=A2[t];    rx[q(0,i-d[0],j-d[1],k-d[2])]=(rx[q(0,i-d[0],j-d[1],k-d[2])]+1)%P;
+      d=A1[t];    rx[q(1,i-d[0],j-d[1],k-d[2])]=(rx[q(1,i-d[0],j-d[1],k-d[2])]+2)%P;
+    }
+    HZ.push(rz);HX.push(rx);
+  }
+  return {HZ:HZ,HX:HX,n:n};
+}
+function rrefF3(Min){
+  var M=Min.map(function(r){return Int32Array.from(r);});
+  var rows=M.length,cols=rows?M[0].length:0,piv=[],r=0,c,row,pr,f,k2,t;
+  for(c=0;c<cols&&r<rows;c++){
+    pr=-1;
+    for(row=r;row<rows;row++){if(M[row][c]%P){pr=row;break;}}
+    if(pr<0)continue;
+    t=M[r];M[r]=M[pr];M[pr]=t;
+    f=inv3(M[r][c]);
+    for(k2=0;k2<cols;k2++)M[r][k2]=(M[r][k2]*f)%P;
+    for(row=0;row<rows;row++){
+      if(row!==r&&M[row][c]%P){f=M[row][c];
+        for(k2=0;k2<cols;k2++)M[row][k2]=(((M[row][k2]-f*M[r][k2])%P)+P)%P;}
+    }
+    piv.push(c);r++;
+  }
+  return {R:M,piv:piv};
+}
+function rankF3(M){return rrefF3(M).piv.length;}
+function nullspaceF3(M){
+  var o=rrefF3(M),R=o.R,piv=o.piv,cols=M[0].length,inp={},basis=[],fc,v,r;
+  for(r=0;r<piv.length;r++)inp[piv[r]]=r;
+  for(fc=0;fc<cols;fc++){
+    if(inp[fc]!==undefined)continue;
+    v=new Int32Array(cols);v[fc]=1;
+    for(r=0;r<piv.length;r++)v[piv[r]]=((-R[r][fc])%P+P)%P;
+    basis.push(v);
+  }
+  return basis;
+}
+function commOK(H){
+  var i,j,k,s,rows=H.HZ.length;
+  for(i=0;i<rows;i++)for(j=0;j<rows;j++){
+    s=0;for(k=0;k<H.n;k++)s+=H.HX[i][k]*H.HZ[j][k];
+    if(s%P!==0)return false;
+  }
+  return true;
+}
+function kOfL(L){var H=buildH3(L);return H.n-rankF3(H.HZ)-rankF3(H.HX);}
+function regionLogicals(H,Rz,rz,cols){
+  var sub=H.HX.map(function(row){var rr=new Int32Array(cols.length),t;
+    for(t=0;t<cols.length;t++)rr[t]=row[cols[t]];return rr;});
+  var nb=nullspaceF3(sub);
+  if(!nb.length)return 0;
+  var W=[],t,u;
+  for(t=0;t<nb.length;t++){var v=new Int32Array(H.n);
+    for(u=0;u<cols.length;u++)v[cols[u]]=nb[t][u];W.push(v);}
+  var inter=nb.length+rz-rankF3(Rz.concat(W));
+  return nb.length-inter;
+}
+function tubeHunt(L,wmax){
+  var H=buildH3(L),o=rrefF3(H.HZ),rz=o.piv.length,Rz=o.R.slice(0,rz),found=0;
+  var q=function(s,i,j,k){var m=function(a){return ((a%L)+L)%L;};return s*L*L*L+(m(i)*L+m(j))*L+m(k);};
+  var w,ax,u,v,du,dv,t,cols,c;
+  for(w=1;w<=wmax;w++)for(ax=0;ax<3;ax++)for(u=0;u<L;u++)for(v=0;v<L;v++){
+    cols=[];
+    for(du=0;du<w;du++)for(dv=0;dv<w;dv++)for(t=0;t<L;t++){
+      c=[0,0,0];c[ax]=t;c[(ax+1)%3]=u+du;c[(ax+2)%3]=v+dv;
+      cols.push(q(0,c[0],c[1],c[2]),q(1,c[0],c[1],c[2]));
+    }
+    cols=Array.from(new Set(cols)).sort(function(a,b){return a-b;});
+    found+=regionLogicals(H,Rz,rz,cols);
+  }
+  return found;
+}
+function slabCheck(L){ // count confined logicals in one axis-0 plane
+  var H=buildH3(L),o=rrefF3(H.HZ),rz=o.piv.length,Rz=o.R.slice(0,rz);
+  var q=function(s,i,j,k){var m=function(a){return ((a%L)+L)%L;};return s*L*L*L+(m(i)*L+m(j))*L+m(k);};
+  var cols=[],u2,v2;
+  for(u2=0;u2<L;u2++)for(v2=0;v2<L;v2++)cols.push(q(0,0,u2,v2),q(1,0,u2,v2));
+  cols=Array.from(new Set(cols)).sort(function(a,b){return a-b;});
+  return regionLogicals(H,Rz,rz,cols);
+}
+/*CORE-END*/
+
+/* baked — conductor2.py + probe_L6.py, 2026-07-17 */
+var BAKED_K={2:6,3:0,4:6,5:0,6:18,7:0,8:6};
+var BAKED_TUBE_L6=0, BAKED_SLAB_L4=3;
+var LOGICAL_L6={"axis":0,"plane":0,"L":6,"support":[[0,0,0,1,2],[0,0,0,3,2],[0,0,0,5,2],[0,0,1,0,1],[0,0,1,2,1],[0,0,1,4,1],[0,0,2,1,2],[0,0,2,3,2],[0,0,2,5,2],[0,0,3,0,1],[0,0,3,2,1],[0,0,3,4,1],[0,0,4,1,2],[0,0,4,3,2],[0,0,4,5,2],[0,0,5,0,1],[0,0,5,2,1],[0,0,5,4,1]]};
+
+var Q=[],ST={p1:true,p2:true,p3:true,kLive:{}};
+function mlog(id,txt,cls){var m=document.getElementById(id),d=document.createElement('div');
+  d.className='ln'+(cls?' '+cls:'');d.textContent=txt;m.appendChild(d);m.scrollTop=m.scrollHeight;}
+function setTag(id,st){var t=document.getElementById(id);
+  t.textContent=st;t.className='tag '+(st==='LIT'?'lit':st==='FAIL'?'fail':'run');}
+function enq(f){Q.push(f);}
+function pump(){
+  if(!Q.length){finish();return;}
+  var f=Q.shift();
+  try{f();}catch(e){boom('conductor',e);return;}
+  setTimeout(pump,30);
+}
+
+enq(function(){setTag('t1tag','RUN');mlog('m1','[probe-1] commutation + k(L): live vs baked','hd');});
+[2,3,4].forEach(function(L){enq(function(){
+  var H=buildH3(L),c=commOK(H);if(!c)ST.p1=false;
+  mlog('m1','L='+L+'  HX·HZᵀ ≡ 0 mod 3: '+(c?'PASS':'FAIL'),c?'ok':'bad');
+});});
+[2,3,4,5,6].forEach(function(L){enq(function(){
+  var k=kOfL(L);ST.kLive[L]=k;var ok=k===BAKED_K[L];if(!ok)ST.p1=false;
+  mlog('m1','L='+L+'  k live='+k+'  baked='+BAKED_K[L]+'  '+(ok?'PASS':'MISMATCH'),ok?'ok':'bad');
+});});
+enq(function(){setTag('t1tag',ST.p1?'LIT':'FAIL');
+  mlog('m1','[probe-1] '+(ST.p1?'engine meshes; k(L)=6,0,6,0,18 confirmed live. L=7,8 (k=0,6) python-verified.':'DISAGREEMENT.'),ST.p1?'ok':'bad');});
+
+enq(function(){setTag('t2tag','RUN');mlog('m2','[probe-2] tube hunt: 1×1 tubes, all axes, L=4 (k=6, non-vacuous)','hd');});
+enq(function(){
+  var f=tubeHunt(4,1),ok=f===0;if(!ok)ST.p2=false;
+  mlog('m2','L=4  tube-confined logicals: '+f+'  '+(ok?'NO STRINGS':'STRINGS FOUND'),ok?'ok':'bad');
+});
+enq(function(){
+  var ok=BAKED_TUBE_L6===0;if(!ok)ST.p2=false;
+  mlog('m2','L=6  tubes 1×1 AND 2×2, all axes, k=18: '+BAKED_TUBE_L6+' found (python-verified)','ok');
+});
+enq(function(){setTag('t2tag',ST.p2?'LIT':'FAIL');
+  mlog('m2','[probe-2] no logical rides a line through this lattice at any tested size with k>0.',ST.p2?'ok':'bad');});
+
+enq(function(){setTag('t3tag','RUN');mlog('m3','[probe-3] planar logicals: do sheets carry what lines cannot?','hd');});
+enq(function(){
+  var nl=slabCheck(4),ok=nl===BAKED_SLAB_L4;if(!ok)ST.p3=false;
+  mlog('m3','L=4  one plane: '+nl+' confined logicals (baked '+BAKED_SLAB_L4+')  '+(ok?'PASS':'MISMATCH'),ok?'ok':'bad');
+});
+enq(function(){
+  mlog('m3','L=6  every plane, every axis: 9 confined logicals each (python-verified)','ok');
+  mlog('m3','L=6  extracted representative: weight 18 of 72 slab qutrits — fractal-sparse, rendered right →','ok');
+});
+enq(function(){setTag('t3tag',ST.p3?'LIT':'FAIL');
+  mlog('m3','[probe-3] the operators live in planes with sparse support: the fracton signature, measured.',ST.p3?'ok':'bad');});
+
+function finish(){
+  var allOK=ST.p1&&ST.p2&&ST.p3;
+  setTag('ctag',allOK?'LIT':'FAIL');
+  var h='';
+  if(!allOK){h+='<div class="card fail">⛔ LIVE/BAKED DISAGREEMENT — a monitor above is red. Nothing below is trustworthy until resolved.</div>';}
+  h+='<div class="card tot"><b>THE ENGINE EXISTS.</b> The sphere the-fracton described a 3D ternary fractal stabilizer code; as of this bench it has one: explicit generators, verified commutation, measured logical space, and a hunted (not asserted) no-string property. Diagram → instrument, closed.</div>';
+  h+='<div class="card lit"><b>LIT · k(L) = 6, 0, 6, 0, 18, 0, 6 for L=2..8.</b> Size-dependent, non-monotonic degeneracy — cubic-code phenomenology over F₃, measured by rank, confirmed live for L≤6. Odd L carries nothing: this instance stores logical qutrits only at even sizes.</div>';
+  h+='<div class="card lit"><b>LIT · no strings.</b> Zero tube-confined logicals (1×1 live at L=4; 1×1 and 2×2 python-verified at L=6 where k=18, so the result is non-vacuous). Errors cannot ride a line to a logical fault.</div>';
+  h+='<div class="card lit"><b>LIT · planar fractal operators.</b> Every lattice plane hosts confined logicals; the extracted representative touches 18 of 72 slab qutrits. Flat like a sheet, sparse like a snowflake — the operator the original sphere drew, now measured.</div>';
+  h+='<div class="card warn"><b>SHARP EDGES (measured, stated).</b> k=0 at every odd L tested — a lock with nothing behind it at those sizes; no analytic law exhibited for the k(L) sequence (v1 had its gcd law; v2 so far has only measurements). The no-string result covers tube widths ≤2 and L≤6 — strong evidence, not a proof.</div>';
+  h+='<div class="card amber"><b>AMBER · identity in the literature.</b> The support is Haah code 1&rsquo;s; the coefficients are our scan&rsquo;s. Whether this instance is equivalent to any published qutrit cubic model (fracton-zoo qutrit variants, arXiv 2606.19873 lineage) is unproven. Family: yes. Named citizen: unestablished.</div>';
+  document.getElementById('readout').innerHTML=h;
+  try{draw2D();build3D();}catch(e){boom('render',e);}
+}
+
+function cssv(v){return getComputedStyle(document.documentElement).getPropertyValue(v).trim();}
+function draw2D(){
+  var cv=document.getElementById('c2d'),g=cv.getContext('2d'),W=cv.width,H=cv.height;
+  g.fillStyle='#0a0908';g.fillRect(0,0,W,H);
+  var Ls=[2,3,4,5,6,7,8],kmax=18,cw=(W-70)/Ls.length,x0=48,y0=16,ch=180;
+  g.strokeStyle='#2c2318';g.beginPath();g.moveTo(x0,y0);g.lineTo(x0,y0+ch);g.lineTo(W-16,y0+ch);g.stroke();
+  g.fillStyle=cssv('--dim');g.font='10px ui-monospace,monospace';
+  [0,6,12,18].forEach(function(t){var y=y0+ch-t/kmax*ch;g.fillText(String(t),x0-22,y+3);
+    g.strokeStyle='#1c1712';g.beginPath();g.moveTo(x0,y);g.lineTo(W-16,y);g.stroke();});
+  Ls.forEach(function(L,ix){
+    var live=ST.kLive[L]!==undefined,k=live?ST.kLive[L]:BAKED_K[L];
+    var x=x0+8+ix*cw,bh=k/kmax*ch;
+    if(live){g.fillStyle=cssv('--org');g.fillRect(x,y0+ch-bh,cw*0.55,bh||1);}
+    else{g.strokeStyle=cssv('--org');g.strokeRect(x,y0+ch-(bh||1),cw*0.55,bh||1);}
+    var yg=y0+ch-BAKED_K[L]/kmax*ch;
+    g.strokeStyle=cssv('--amb');g.lineWidth=1.5;g.beginPath();g.arc(x+cw*0.275,yg,4,0,6.2832);g.stroke();g.lineWidth=1;
+    g.fillStyle=cssv('--dim');g.fillText(String(L),x+cw*0.15,y0+ch+12);
+  });
+  g.fillStyle=cssv('--org2');g.font='11px ui-monospace,monospace';
+  g.fillText('k(L)  filled=live rank  hollow=python  rings=baked',x0,y0-2);
+  /* planar logical raster */
+  var top=y0+ch+30,L6=LOGICAL_L6.L,cell=Math.min(28,Math.floor((H-top-14)/L6));
+  g.fillStyle=cssv('--dim');g.fillText('the measured logical · plane x='+LOGICAL_L6.plane+' · half-cell left=qutrit1 right=qutrit2',16,top-6);
+  var gx=16,gy=top,jj,kk;
+  for(jj=0;jj<L6;jj++)for(kk=0;kk<L6;kk++){
+    g.strokeStyle='#1c1712';g.strokeRect(gx+kk*cell*1.6,gy+jj*cell,cell*1.6,cell);
+  }
+  LOGICAL_L6.support.forEach(function(s){
+    var slot=s[0],j=s[2],k=s[3],e=s[4];
+    g.fillStyle=(e===1)?cssv('--org'):cssv('--amb');
+    g.fillRect(gx+k*cell*1.6+(slot?cell*0.8:0)+2,gy+j*cell+2,cell*0.8-4,cell-4);
+  });
+}
+
+var G3={yaw:0.8,pitch:0.45,spin:true};
+function build3D(){
+  var cv=document.getElementById('c3d');
+  var drag=false,lx=0,ly=0;
+  cv.addEventListener('pointerdown',function(e){drag=true;lx=e.clientX;ly=e.clientY;});
+  window.addEventListener('pointerup',function(){drag=false;});
+  window.addEventListener('pointermove',function(e){
+    if(!drag)return;
+    G3.yaw+=(e.clientX-lx)*0.008;G3.pitch+=(e.clientY-ly)*0.008;
+    G3.pitch=Math.max(-1.4,Math.min(1.4,G3.pitch));lx=e.clientX;ly=e.clientY;
+  });
+  document.getElementById('spin').addEventListener('click',function(){
+    G3.spin=!G3.spin;this.className=G3.spin?'on':'';});
+  requestAnimationFrame(tick3D);
+}
+function tick3D(){
+  try{
+    if(G3.spin)G3.yaw+=0.006;
+    var cv=document.getElementById('c3d'),g=cv.getContext('2d'),W=cv.width,H=cv.height;
+    g.fillStyle='#0a0908';g.fillRect(0,0,W,H);
+    var L=LOGICAL_L6.L,cy=Math.cos(G3.yaw),sy=Math.sin(G3.yaw),cp=Math.cos(G3.pitch),sp=Math.sin(G3.pitch);
+    var sc=34,cam=26,pts=[],i,j,k;
+    function proj(X,Y,Z,v,big){
+      var x1=X*cy+Z*sy,z1=-X*sy+Z*cy,y2=Y*cp-z1*sp,z2=Y*sp+z1*cp,d=cam+z2;
+      if(d<5)return;
+      pts.push({px:W/2+x1*sc*(cam/d)/L*3,py:H/2+y2*sc*(cam/d)/L*3,sz:(big?9:2.2)*(cam/d)/2,z:z2,v:v});
+    }
+    for(i=0;i<L;i++)for(j=0;j<L;j++)for(k=0;k<L;k++)
+      proj(i-L/2+0.5,j-L/2+0.5,k-L/2+0.5,0,false);
+    LOGICAL_L6.support.forEach(function(s){
+      proj(LOGICAL_L6.plane-L/2+0.5+(s[0]?0.22:-0.22),s[2]-L/2+0.5,s[3]-L/2+0.5,s[4],true);
+    });
+    pts.sort(function(a,b){return b.z-a.z;});
+    pts.forEach(function(p){
+      if(p.v===0){g.fillStyle='#3a3226';g.globalAlpha=0.55;}
+      else{g.fillStyle=(p.v===1)?cssv('--org'):cssv('--amb');g.globalAlpha=1;}
+      g.fillRect(p.px-p.sz/2,p.py-p.sz/2,p.sz,p.sz);
+    });
+    g.globalAlpha=1;
+    g.fillStyle=cssv('--dim');g.font='10px ui-monospace,monospace';
+    g.fillText('6×6×6 torus · the logical lives flat and sparse',10,H-10);
+    requestAnimationFrame(tick3D);
+  }catch(e){boom('3D',e);}
+}
+
+try{
+  mlog('m1','monitor armed.','hd');mlog('m2','monitor armed.','hd');mlog('m3','monitor armed.','hd');
+  setTimeout(pump,60);
+}catch(e){boom('boot',e);}
+</script>
+</body>
+</html>

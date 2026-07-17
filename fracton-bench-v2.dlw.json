@@ -1,0 +1,19 @@
+{
+  "moniker": "⟦FRACTON BENCH V2:QEC:32763f⟧",
+  "spoken": "thy-keir-neim",
+  "name": "FRACTON BENCH V2",
+  "axiom": "QEC",
+  "nature": "electrical",
+  "origin": "UD0 · Universe David 0",
+  "seal_line": "the-fracton got its engine: k=6,0,6,0,18,0,6 · no strings at k=18 · planar fractal logicals 18/72 · html 7889e6311d8a044c",
+  "seal_sha256": "c2625c1cf63646bc88916709f388ed372d3acb8733412f4796cf24e37a320842",
+  "artifacts": {
+    "fracton-bench-v2.html": "7889e6311d8a044c1aae58dbe851a603ca9913c93ddbbb3e9b87a3e5b38c23e1",
+    "fracton_v2_conductor.py": "07f4038fbf039ca4f1bd2501ea22c3a71fc85cfc251f71bd37bd97246243df31",
+    "logical_L6.json": "109238f016ae80790104be28ff24a7fe877b833c6a38ddaf60afd6eeadf9fb6d"
+  },
+  "license": "CC-BY-ND-4.0",
+  "attribution": "ROOT0-ATTRIBUTION-v1.0",
+  "sealed": "2026-07-17",
+  "provenance": "ceremony reassembled from the-sealing-bench derivation; control-arm verified against published dlw.py values; chain-commit awaits ROOT0 push"
+}
